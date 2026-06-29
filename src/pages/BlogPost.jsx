@@ -122,19 +122,40 @@ export default function BlogPost() {
       <article>
         {post.sections.map((section, i) => (
           <section key={i} style={{ marginBottom: '36px' }}>
-            <h2
-              style={{
-                fontFamily: SERIF,
-                fontSize: '17px',
-                fontWeight: '700',
-                color: '#1a1a1a',
-                margin: '0 0 12px 0',
-                letterSpacing: '0.01em',
-              }}
-            >
-              {section.heading}
-            </h2>
-            {section.body.split('\n\n').map((para, j) => (
+            {section.heading && (
+              <h2
+                style={{
+                  fontFamily: SERIF,
+                  fontSize: '17px',
+                  fontWeight: '700',
+                  color: '#1a1a1a',
+                  margin: '0 0 12px 0',
+                  letterSpacing: '0.01em',
+                }}
+              >
+                {section.heading}
+              </h2>
+            )}
+            {section.code && (
+              <pre
+                style={{
+                  fontFamily: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace",
+                  fontSize: '13px',
+                  lineHeight: '1.65',
+                  background: '#f5f5f0',
+                  border: '1px solid #ddd',
+                  borderLeft: '3px solid #1a1a1a',
+                  padding: '16px 20px',
+                  margin: '0 0 16px 0',
+                  overflowX: 'auto',
+                  whiteSpace: 'pre',
+                  color: '#1a1a1a',
+                }}
+              >
+                <code>{section.code}</code>
+              </pre>
+            )}
+            {section.body && section.body.split('\n\n').map((para, j) => (
               <p
                 key={j}
                 style={{

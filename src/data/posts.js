@@ -1,94 +1,100 @@
 export const posts = [
   {
-    slug: 'why-i-built-neuralflow',
-    title: 'Why I Built NeuralFlow: Notes on Transformer Inference',
-    date: '2024-11-12',
-    tags: ['ML Systems', 'CUDA', 'Performance'],
+    slug: 'anndata-scrnaseq-data-structure',
+    title: 'AnnData: The Data Structure Behind Single-Cell RNA Sequencing',
+    date: '2026-06-29',
+    tags: ['Bioinformatics', 'Python', 'scRNA-seq'],
     excerpt:
-      'Running large transformer models in production is expensive. Here is what I learned building a custom inference runtime that cuts costs by 3×.',
+      "Before you run a single analysis in scRNA-seq, you need to understand how your data is structured. A regular pandas DataFrame won't cut it — you're dealing with thousands of cells, thousands of genes, and multiple layers of metadata all at once. That's where AnnData comes in.",
     sections: [
       {
-        heading: 'The problem with naive PyTorch serving',
-        body: `Most teams deploy transformer models the same way they train them: wrap the model in a FastAPI endpoint, call model.generate(), ship it. This works fine at low traffic, but the moment you need to serve hundreds of requests per second, you run into a wall.
+        heading: null,
+        body: `Before you run a single analysis in single-cell RNA sequencing (scRNA-seq), you need to understand how your data is structured. A regular pandas DataFrame won't cut it — you're dealing with thousands of cells, thousands of genes, and multiple layers of metadata all at once. That's where AnnData comes in.
 
-The two biggest killers are memory bandwidth and kernel launch overhead. A naive forward pass launches dozens of small CUDA kernels, each with significant launch latency. Between requests, the KV cache is rebuilt from scratch even when it does not need to be. The GPU spends more time waiting than computing.`,
+This post walks through the core AnnData concepts using a minimal example. All code is available in my scrna-benchmark repository on GitHub.
+
+Note: This post closely follows the official AnnData getting-started tutorial by Adam Gayoso and Alex Wolf. My additions include a reusable generate_names() helper function and annotations explaining each concept in the context of the PBMC68k benchmarking project.`,
       },
       {
-        heading: 'Kernel fusion: the core idea',
-        body: `The insight behind NeuralFlow is straightforward: if you know the computation graph ahead of time (and for a fixed-architecture transformer you do), you can fuse adjacent operations into a single kernel. The attention QKV projection, the softmax, and the output projection can be written as one CUDA kernel that never writes intermediate results to global memory.
+        heading: 'Setup',
+        code: `import numpy as np
+import pandas as pd
+import anndata as ad
+from scipy.sparse import csr_matrix
+from importlib.metadata import version
 
-This is not a new idea — FlashAttention pioneered it — but generalizing it to arbitrary fusion patterns and wiring it into a production serving framework requires a surprising amount of engineering work.`,
+version('anndata')  # '0.12.16'`,
+        body: `AnnData is a Python package from the scverse ecosystem — the standard data container for single-cell analysis tools like Scanpy, scVI, and Squidpy. Think of it as a specialised matrix with named rows (cells) and columns (genes), plus dedicated slots for every kind of metadata you'll accumulate during an analysis.`,
       },
       {
-        heading: 'KV-cache management at scale',
-        body: `The second major win came from persistent KV caches. Instead of discarding the key-value pairs from the attention layers after each generation, NeuralFlow keeps a bounded cache keyed by the prefix hash of the prompt. For chat-style workloads where many requests share a system prompt, cache hit rates above 60% are common.
+        heading: 'Creating an AnnData object',
+        code: `counts = csr_matrix(np.random.poisson(1, size=(100, 2000)), dtype=np.float32)
+adata = ad.AnnData(counts)
+# AnnData object with n_obs × n_vars = 100 × 2000`,
+        body: `n_obs = 100 cells (observations). n_vars = 2000 genes (variables).
 
-The tricky part is eviction policy. A naive LRU evicts large caches that happen to be old even if they are frequently reused. We use a cost-aware eviction policy that weights by recomputation cost, not just recency.`,
+Why csr_matrix? Real scRNA-seq data is roughly 90% zeros — most genes are not detected in any given cell. Compressed Sparse Row format stores only the non-zero values, which cuts memory usage dramatically when you scale to 68,000 cells.
+
+Why Poisson? Gene counts follow a Poisson distribution in real biology. The mean and variance of expression are coupled. This matters when you choose normalisation and statistical models later.`,
       },
       {
-        heading: 'Results and open questions',
-        body: `On a fleet of A100 GPUs serving a 7B parameter model, NeuralFlow achieves roughly 3× higher throughput than a baseline PyTorch serving stack at the same latency SLO. Memory savings from cache reuse are highly workload-dependent — anywhere from 20% to 60%.
+        heading: 'The count matrix (adata.X)',
+        code: `adata.X
+# <Compressed Sparse Row sparse matrix of dtype 'float32'
+#   with 126465 stored elements and shape (100, 2000)>`,
+        body: `adata.X is your raw count matrix. It stores how many times each gene was detected in each cell. float32 instead of float64 halves memory usage — important when your matrix grows to 68,000 cells × 33,000 genes.`,
+      },
+      {
+        heading: 'Naming cells and genes',
+        code: `def generate_names(prefix, count):
+    return [f"{prefix}_{i}" for i in range(count)]
 
-What I did not solve: dynamic batching across variable-length sequences remains messy, and the fusion compiler does not yet handle MoE layers. Both are active areas of work.`,
+adata.obs_names = generate_names("Cell", adata.n_obs)
+adata.var_names = generate_names("Gene", adata.n_vars)
+
+print(adata.obs_names[:10], adata.var_names[:10], sep="\\n")`,
+        body: `obs_names are cell barcodes in real data — unique identifiers like ACGTACGT-1 assigned during sequencing. var_names are gene names like CD3E or CD19.
+
+Naming them properly is essential for two reasons: slicing by name is much safer than slicing by integer index, and when you merge multiple datasets the names are what AnnData uses to align observations and variables.
+
+The generate_names() function is a small convenience helper. In real data you'd read these names directly from a Cell Ranger output or an h5ad file.`,
+      },
+      {
+        heading: 'Slicing: Views, not copies',
+        code: `adata[["Cell_1", "Cell_10"], ["Gene_5", "Gene_1900"]]
+# View of AnnData object with n_obs × n_vars = 2 × 2`,
+        body: `AnnData slicing returns a View, not a copy. The underlying data is not duplicated in memory — the view just holds a reference with index offsets. This is critical when working with 68,000 cells: a naive copy-on-slice approach like pandas would exhaust RAM in seconds.
+
+If you need a true independent copy (for example before modifying a subset), call .copy() explicitly.`,
+      },
+      {
+        heading: 'Cell metadata (adata.obs)',
+        code: `ct = np.random.choice(["B", "T", "Monocyte"], size=(adata.n_obs,))
+adata.obs["cell_type"] = pd.Categorical(ct)
+adata.obs`,
+        body: `adata.obs is a pandas DataFrame where each row is a cell. You can store any per-cell annotation here: cell type labels, sample batch, QC metrics, cluster assignments.
+
+Why pd.Categorical and not a plain string column? Categorical uses integer codes under the hood — faster groupby operations, lower memory, and downstream tools like Scanpy expect it. Any column you'll use for colouring a UMAP or splitting a violin plot should be Categorical.`,
+      },
+      {
+        heading: 'What comes next',
+        body: `This notebook only scratches the surface. The next posts in this series will cover:
+
+adata.var for gene-level metadata (highly variable gene flags, mean expression, dispersion). adata.obsm for storing low-dimensional embeddings like PCA and UMAP coordinates. Saving and loading .h5ad files — the standard interchange format for single-cell data. All of this builds toward the full PBMC68k benchmarking pipeline.
+
+References: Gayoso, A. & Wolf, A. (2024). AnnData getting-started tutorial. scverse. anndata.scverse.org`,
       },
     ],
   },
-  {
-    slug: 'crdts-in-practice',
-    title: 'CRDTs in Practice: What the Papers Do Not Tell You',
-    date: '2023-09-04',
-    tags: ['Distributed Systems', 'CRDTs', 'WebRTC'],
-    excerpt:
-      'Building MeshSync forced me to learn the gap between CRDT theory and a working collaborative editor. Here is what surprised me.',
-    sections: [
-      {
-        heading: 'Why CRDTs look easy on paper',
-        body: `A Conflict-free Replicated Data Type is an elegant idea: design your data structure so that any two replicas can always be merged without conflicts. The math is clean — you need a lattice with a join operation that is commutative, associative, and idempotent. Read the original Shapiro et al. paper and you come away thinking this is solved.
-
-Then you try to build something with it.`,
-      },
-      {
-        heading: 'The tombstone problem',
-        body: `Deletions are where CRDT implementations earn their complexity. When a character is deleted in a collaborative editor, you cannot simply remove it from your local state — another peer might concurrently insert after that character, and if you delete it first you lose the insertion context. So you mark it as a tombstone: present in the data structure, invisible in the rendered output.
-
-Over time, tombstones accumulate. A document with thousands of edits over weeks of collaboration can have a tombstone-to-visible-character ratio of 10:1 or worse. Garbage-collecting them requires coordination that partially defeats the point of CRDTs.`,
-      },
-      {
-        heading: 'What I actually shipped',
-        body: `MeshSync uses a sequence CRDT based on Logoot with some pragmatic compromises. Tombstone GC runs only when all peers are online and explicitly agree to compact — rare in practice but safe when it happens. The gossip protocol handles message delivery over WebRTC data channels, with a simple sequence number scheme for deduplication.
-
-For most real workloads — small files, small teams, short sessions — it works well. The failure modes are predictable and the implementation is auditable. Sometimes that matters more than theoretical optimality.`,
-      },
-    ],
-  },
-  {
-    slug: 'on-reading-papers',
-    title: 'On Reading Papers Effectively',
-    date: '2023-03-20',
-    tags: ['Research', 'Craft'],
-    excerpt:
-      'A method I developed over two years of reading ML papers that cut my reading time in half while doubling retention.',
-    sections: [
-      {
-        heading: 'The trap of sequential reading',
-        body: `Most people read papers the way they read novels: start at the abstract, proceed linearly to the conclusion. This is a reasonable strategy for fiction. For research papers it is inefficient.
-
-A paper is an argument, not a narrative. Its structure is designed to convince reviewers, not to communicate ideas efficiently. The most important information — what was built, what was measured, whether it worked — is scattered across the abstract, the results section, and the conclusion. The related work and method sections are necessary but rarely where insights live.`,
-      },
-      {
-        heading: 'Three-pass reading',
-        body: `I use a three-pass approach adapted from Keshav's classic guide. On the first pass I read only the title, abstract, introduction, section headings, and conclusion. This takes five minutes and answers one question: is this paper worth my time?
-
-On the second pass I read figures and tables before the prose that describes them. A good paper's results are legible from its plots alone. If I cannot understand what was measured and how from the figures, the paper usually has a clarity problem.
-
-The third pass — careful end-to-end reading — I reserve for papers I intend to build on or critique. Most papers do not make it here.`,
-      },
-      {
-        heading: 'Taking notes that outlast the paper',
-        body: `The note format that has worked best for me is a single document per paper with four sections: the core claim in one sentence, the key evidence for that claim, the limitations the authors acknowledge, and the limitations they do not.
-
-That last section — limitations the authors do not acknowledge — is where the most interesting research directions tend to hide. If a method requires careful hyperparameter tuning to reproduce, the authors often mention this only in passing. If the evaluation is on a benchmark that favors the proposed method, it is rarely flagged. Reading critically, not just receptively, is a practiced skill.`,
-      },
-    ],
-  },
+  // {
+  //   slug: 'your-next-post',
+  //   title: '',
+  //   date: 'YYYY-MM-DD',
+  //   tags: [],
+  //   excerpt: '',
+  //   sections: [
+  //     { heading: null, body: '' },
+  //     { heading: '', code: '', body: '' },
+  //   ],
+  // },
 ];
