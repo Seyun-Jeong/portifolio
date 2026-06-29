@@ -36,7 +36,7 @@ export default function Identity() {
               margin: '0 0 16px 0',
             }}
           >
-            Graduate researcher in machine learning systems. Exploring long-context inference optimization, collaborative development tools, and data-centric AI.
+
           </p>
           <p
             style={{
@@ -47,7 +47,7 @@ export default function Identity() {
               margin: '0',
             }}
           >
-            Open to research collaborations, internships, and full-time engineering roles beginning 2025.
+            
           </p>
         </div>
       </div>

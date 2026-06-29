@@ -70,7 +70,7 @@ export default function Philosophy() {
         }}
       >
         <span>Seyun Jeong — {new Date().getFullYear()}</span>
-        <span>Computer Science Researcher & Engineer</span>
+        <span></span>
       </footer>
     </section>
   );
