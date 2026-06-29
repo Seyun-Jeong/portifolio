@@ -1,122 +1,156 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { Routes, Route } from 'react-router-dom';
+import './App.css';
+import { projects } from './data/content';
+import Cover from './components/Cover';
+import Identity from './components/Identity';
+import Project from './components/Project';
+import Publications from './components/Publications';
+import Skills from './components/Skills';
+import Philosophy from './components/Philosophy';
+import BlogIndex from './pages/BlogIndex';
+import BlogPost from './pages/BlogPost';
 
-function App() {
-  const [count, setCount] = useState(0)
+const SECTION_DIVIDER = (
+  <hr
+    style={{
+      border: 'none',
+      borderTop: '1px solid #999',
+      margin: '36px 0',
+    }}
+  />
+);
+
+function ProjectsSection() {
+  const row1 = projects.slice(0, 2);
+  const row2 = projects.slice(2);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    <section>
+      <SectionHeader>Projects</SectionHeader>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          columnGap: '40px',
+        }}
+      >
+        {row1.map((project, i) => (
+          <Project
+            key={project.id}
+            name={project.name}
+            stack={project.stack}
+            description={project.description}
+            year={project.year}
+            category={project.category}
+            hasBorderRight={i % 2 === 0}
+          />
+        ))}
+      </div>
+      {row2.length > 0 && (
+        <>
+          <hr
+            style={{
+              border: 'none',
+              borderTop: '1px solid #e8e4da',
+              margin: '0 0 0 0',
+            }}
+          />
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              columnGap: '40px',
+            }}
+          >
+            {row2.map((project, i) => (
+              <Project
+                key={project.id}
+                name={project.name}
+                stack={project.stack}
+                description={project.description}
+                year={project.year}
+                category={project.category}
+                hasBorderRight={i % 2 === 0}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </section>
+  );
 }
 
-export default App
+function SectionHeader({ children }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px',
+        marginBottom: '20px',
+      }}
+    >
+      <h2
+        style={{
+          fontFamily: 'Georgia, serif',
+          fontSize: '13px',
+          fontWeight: '400',
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          color: '#1a1a1a',
+          margin: '0',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {children}
+      </h2>
+      <div style={{ flex: 1, height: '1px', background: '#1a1a1a' }} />
+    </div>
+  );
+}
+
+function Portfolio() {
+  return (
+    <div
+      style={{
+        maxWidth: '1080px',
+        margin: '0 auto',
+        padding: '32px 40px 60px',
+        backgroundColor: '#fffef7',
+        minHeight: '100vh',
+      }}
+    >
+      <Cover />
+
+      <div style={{ marginTop: '32px' }}>
+        <Identity />
+      </div>
+
+      {SECTION_DIVIDER}
+
+      <ProjectsSection />
+
+      {SECTION_DIVIDER}
+
+      <Publications />
+
+      {SECTION_DIVIDER}
+
+      <Skills />
+
+      <div style={{ marginTop: '36px' }}>
+        <Philosophy />
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Portfolio />} />
+      <Route path="/blog" element={<BlogIndex />} />
+      <Route path="/blog/:slug" element={<BlogPost />} />
+    </Routes>
+  );
+}
