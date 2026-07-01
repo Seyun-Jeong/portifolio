@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { identity } from '../data/content';
+import seyunPhoto from '../assets/seyun_jeong.jpg';
 
 export default function Cover() {
   return (
@@ -30,9 +31,10 @@ export default function Cover() {
             alignItems: 'center',
           }}
         >
-          <span>Portfolio — {new Date().getFullYear()}</span>
+          <span>Portfolio · {new Date().getFullYear()}</span>
           <Link
             to="/blog"
+            className="no-print"
             style={{
               color: '#888',
               textDecoration: 'none',
@@ -43,31 +45,48 @@ export default function Cover() {
             Writing →
           </Link>
         </div>
-        <h1
-          style={{
-            fontFamily: 'Georgia, serif',
-            fontSize: 'clamp(36px, 5vw, 62px)',
-            fontWeight: '700',
-            lineHeight: '1.0',
-            letterSpacing: '-0.5px',
-            color: '#1a1a1a',
-            margin: '0 0 8px 0',
-          }}
-        >
-          {identity.name}
-        </h1>
-        <p
-          style={{
-            fontFamily: 'Georgia, serif',
-            fontSize: '17px',
-            fontStyle: 'italic',
-            color: '#444',
-            margin: '0',
-            letterSpacing: '0.01em',
-          }}
-        >
-          {identity.title}
-        </p>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '20px' }}>
+          <img
+            src={seyunPhoto}
+            alt="Seyun Jeong"
+            style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              flexShrink: 0,
+              marginBottom: '4px',
+              border: '1px solid #e0e0e0',
+            }}
+          />
+          <div>
+            <h1
+              style={{
+                fontFamily: 'Georgia, serif',
+                fontSize: 'clamp(36px, 5vw, 62px)',
+                fontWeight: '700',
+                lineHeight: '1.0',
+                letterSpacing: '-0.5px',
+                color: '#1a1a1a',
+                margin: '0 0 8px 0',
+              }}
+            >
+              {identity.name}
+            </h1>
+            <p
+              style={{
+                fontFamily: 'Georgia, serif',
+                fontSize: '17px',
+                fontStyle: 'italic',
+                color: '#444',
+                margin: '0',
+                letterSpacing: '0.01em',
+              }}
+            >
+              {identity.title}
+            </p>
+          </div>
+        </div>
       </div>
 
       <div
@@ -109,7 +128,7 @@ export default function Cover() {
             rel="noreferrer"
             style={{ color: '#1a1a1a', textDecoration: 'none' }}
           >
-            linkedin.com/in/seyunjeong
+            linkedin.com/in/jeongseyun7
           </a>
         </div>
       </div>

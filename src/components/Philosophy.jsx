@@ -69,7 +69,7 @@ export default function Philosophy() {
           justifyContent: 'space-between',
         }}
       >
-        <span>Seyun Jeong — {new Date().getFullYear()}</span>
+        <span>Seyun Jeong · {new Date().getFullYear()}</span>
         <span></span>
       </footer>
     </section>

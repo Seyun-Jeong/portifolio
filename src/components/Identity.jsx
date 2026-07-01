@@ -36,7 +36,7 @@ export default function Identity() {
               margin: '0 0 16px 0',
             }}
           >
-
+            {identity.currently.line1}
           </p>
           <p
             style={{
@@ -47,7 +47,7 @@ export default function Identity() {
               margin: '0',
             }}
           >
-            
+            {identity.currently.line2}
           </p>
         </div>
       </div>
