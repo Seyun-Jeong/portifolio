@@ -48,7 +48,7 @@ export const publications = [
     venue: 'DRBSD-11, SC Workshops 2025',
     year: '2025',
     award: 'Best Paper Runner-Up',
-    description: 'Benchmarked CPU and GPU scRNA-seq pipelines on a 1.3M-cell dataset. GPUs achieved 10x+ speedup but with moderate clustering concordance (ARI ~0.50), showing that computational platform choice is a critical variable in biological interpretation. Published at SC 2025 in St. Louis, MO.',
+    description: 'Benchmarked CPU and GPU scRNA-seq pipelines on a 1.3M-cell mouse brain (E18) dataset from 10x Genomics. GPUs achieved 10x+ speedup but with moderate clustering concordance (ARI ~0.50), showing that computational platform choice is a critical variable in biological interpretation. Published at SC 2025 in St. Louis, MO.',
     link: 'https://doi.org/10.1145/3731599.3767378',
   },
 ];
@@ -77,6 +77,7 @@ export const skills = [
 ];
 
 export const philosophy = {
-  motto: 'Every action you take is a vote for the type of person you wish to become',
+  motto: 'Every action you take is a vote for the type of person you wish to become.',
+  attribution: '— James Clear',
   statement: 'Consistency compounds. I log what I built, what broke, and what I learned. Not for performance reviews. Because progress only becomes visible in retrospect. Team first.',
 };

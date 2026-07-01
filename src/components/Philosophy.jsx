@@ -42,6 +42,19 @@ export default function Philosophy() {
           >
             &ldquo;{philosophy.motto}&rdquo;
           </blockquote>
+          {philosophy.attribution && (
+            <p
+              style={{
+                fontFamily: 'system-ui, sans-serif',
+                fontSize: '12px',
+                color: '#888',
+                marginTop: '10px',
+                letterSpacing: '0.05em',
+              }}
+            >
+              {philosophy.attribution}
+            </p>
+          )}
         </div>
 
         <div>
