@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# unnecessary files
+seyun_jeong_portfolio.pdf
+package-lock 2.json
+/seyun_jeong.jpg

@@ -62,6 +62,7 @@ a:hover {
   /* Don't expand mailto: and github links — too noisy */
   a[href^="mailto:"]::after,
   a[href^="https://github"]::after,
+  a[href^="https://www.linkedin"]::after,
   a[href^="https://linkedin"]::after {
     content: "";
   }

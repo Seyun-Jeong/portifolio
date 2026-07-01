@@ -42,8 +42,39 @@ export default function Publications() {
                     letterSpacing: '-0.1px',
                   }}
                 >
-                  {pub.title}
+                  {pub.link ? (
+                    <a
+                      href={pub.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: 'inherit', textDecoration: 'none', borderBottom: '1px solid #ccc' }}
+                    >
+                      {pub.title}
+                    </a>
+                  ) : (
+                    pub.title
+                  )}
                 </h3>
+                {pub.award && (
+                  <div
+                    style={{
+                      display: 'inline-block',
+                      fontFamily: 'system-ui, sans-serif',
+                      fontSize: '10px',
+                      fontWeight: '700',
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      color: '#7a6a3a',
+                      background: '#f5f0e0',
+                      border: '1px solid #d8c88a',
+                      borderRadius: '2px',
+                      padding: '2px 7px',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    {pub.award}
+                  </div>
+                )}
                 <p
                   style={{
                     fontFamily: 'system-ui, sans-serif',
