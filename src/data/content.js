@@ -16,7 +16,7 @@ export const projects = [
     id: 1,
     name: 'scRNA-seq CPU vs GPU Validation Framework',
     stack: ['RAPIDS', 'CUDA', 'Scanpy', 'Seurat', 'ScaleSC', 'Python', 'R'],
-    description: 'Benchmarked matched CPU and GPU scRNA-seq pipelines on a 1.3-million-cell PBMC dataset. GPU delivered 10x+ end-to-end speedup but with systematic clustering differences from CPU (ARI ~0.50 across all sample sizes). Found that platform-specific algorithmic choices, not sample size, are the primary driver of biological interpretation variance.',
+    description: 'Benchmarked matched CPU and GPU scRNA-seq pipelines on a mouse brain cell dataset from 10x Genomics. GPU delivered 10x+ end-to-end speedup but with systematic clustering differences from CPU (ARI ~0.50 across all sample sizes). Found that platform-specific algorithmic choices, not sample size, are the primary driver of biological interpretation variance.',
     year: '2025',
     category: 'Research',
     link: 'https://github.com/Seyun-Jeong/scrna-benchmark',
@@ -77,6 +77,6 @@ export const skills = [
 ];
 
 export const philosophy = {
-  motto: 'Great things will happen for you by spoiling others.',
+  motto: 'Every action you take is a vote for the type of person you wish to become',
   statement: 'Consistency compounds. I log what I built, what broke, and what I learned. Not for performance reviews. Because progress only becomes visible in retrospect. Team first.',
 };
