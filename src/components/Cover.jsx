@@ -118,7 +118,7 @@ export default function Cover() {
             rel="noreferrer"
             style={{ color: '#1a1a1a', textDecoration: 'none' }}
           >
-            github.com/seyunjeong
+            {identity.github.replace('https://', '')}
           </a>
         </div>
         <div>
