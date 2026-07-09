@@ -44,6 +44,23 @@ export default function Cover() {
           >
             Writing →
           </Link>
+          <button
+            className="no-print"
+            onClick={() => window.print()}
+            style={{
+              background: 'none',
+              border: '1px solid #ccc',
+              borderRadius: '3px',
+              cursor: 'pointer',
+              color: '#888',
+              fontSize: '11px',
+              letterSpacing: '0.12em',
+              padding: '2px 8px',
+              fontFamily: 'Georgia, serif',
+            }}
+          >
+            Print PDF
+          </button>
         </div>
         <div style={{ display: 'flex', alignItems: 'flex-end', gap: '20px' }}>
           <img

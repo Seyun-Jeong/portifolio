@@ -1,7 +1,7 @@
 export const identity = {
   name: 'Seyun Jeong',
   title: 'AI Researcher',
-  bio: `Python-based AI research and data pipeline development. M.S. in Artificial Intelligence candidate at Saint Louis University (expected August 2026). Validated performance and reproducibility of large-scale analysis workflows on NVIDIA H100 and L40S environments; co-author of a full paper at the SC25 DRBSD-11 Workshop (Best Paper Runner-up Award). On Videre, contributed to an assistive-navigation prototype combining multimodal AI APIs, sensor data processing, and Supabase logging. At MedReveal, contributed to Python/Go data processing and PostgreSQL data modeling. Seeking to apply Python-based data analysis, reproducible model evaluation, and healthcare research experience to machine-learning research involving physiological and wearable-device data.`,
+  bio: `Python-based AI research and data pipeline development. M.S. in Artificial Intelligence candidate at Saint Louis University (expected August 2026). Validated performance and reproducibility of large-scale analysis workflows on NVIDIA H100 and L40S environments; co-author of a full paper at the SC25 DRBSD-11 Workshop (Best Paper Runner-up Award). On Videre, contributed to an assistive-navigation prototype combining multimodal AI APIs, sensor data processing, and Supabase logging. At MedReveal, contributed to Python/Go data processing and PostgreSQL data modeling. Seeking to apply Python-based data analysis, reproducible model evaluation, and healthcare research experience to machine-learning research involving large-scale scientific and real-world data.`,
   email: 'suj7109@gmail.com',
   github: 'https://github.com/Seyun-Jeong',
   linkedin: 'https://www.linkedin.com/in/jeongseyun7/',
