@@ -21,40 +21,25 @@ const SECTION_DIVIDER = (
 );
 
 function ProjectsSection() {
-  const row1 = projects.slice(0, 2);
-  const row2 = projects.slice(2);
+  const rows = [];
+  for (let i = 0; i < projects.length; i += 2) {
+    rows.push(projects.slice(i, i + 2));
+  }
 
   return (
     <section>
       <SectionHeader>Projects</SectionHeader>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          columnGap: '40px',
-        }}
-      >
-        {row1.map((project, i) => (
-          <Project
-            key={project.id}
-            name={project.name}
-            stack={project.stack}
-            description={project.description}
-            year={project.year}
-            category={project.category}
-            hasBorderRight={i % 2 === 0}
-          />
-        ))}
-      </div>
-      {row2.length > 0 && (
-        <>
-          <hr
-            style={{
-              border: 'none',
-              borderTop: '1px solid #e8e4da',
-              margin: '0 0 0 0',
-            }}
-          />
+      {rows.map((row, rowIndex) => (
+        <div key={rowIndex}>
+          {rowIndex > 0 && (
+            <hr
+              style={{
+                border: 'none',
+                borderTop: '1px solid #e8e4da',
+                margin: '0',
+              }}
+            />
+          )}
           <div
             style={{
               display: 'grid',
@@ -62,7 +47,7 @@ function ProjectsSection() {
               columnGap: '40px',
             }}
           >
-            {row2.map((project, i) => (
+            {row.map((project, i) => (
               <Project
                 key={project.id}
                 name={project.name}
@@ -74,8 +59,8 @@ function ProjectsSection() {
               />
             ))}
           </div>
-        </>
-      )}
+        </div>
+      ))}
     </section>
   );
 }
